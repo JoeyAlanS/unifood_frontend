@@ -49,16 +49,16 @@ const ClienteInterface = () => {
       );
       if (res.ok) {
         const data = await res.json();
-        setCadastroMensagem(`✅ Cliente cadastrado! ID: ${data.id}`);
+        setCadastroMensagem(` Cliente cadastrado! ID: ${data.id}`);
         setCadNome('');
         setCadEmail('');
         setCadTelefone('');
         setCadEndereco('');
       } else {
-        setCadastroMensagem('❌ Erro ao cadastrar.');
+        setCadastroMensagem(' Erro ao cadastrar.');
       }
     } catch {
-      setCadastroMensagem('❌ Erro de conexão.');
+      setCadastroMensagem(' Erro de conexão.');
     }
   };
 
@@ -80,15 +80,15 @@ const ClienteInterface = () => {
         }
       );
       setUpdateMensagem(
-        res.ok ? '✅ Cliente atualizado.' : '❌ Erro. ID inválido?'
+        res.ok ? ' Cliente atualizado.' : ' Erro. ID inválido?'
       );
     } catch {
-      setUpdateMensagem('❌ Erro de conexão.');
+      setUpdateMensagem(' Erro de conexão.');
     }
   };
 
   const handleDelete = async () => {
-    if (!delId) return setDeleteMensagem('❌ Informe o ID.');
+    if (!delId) return setDeleteMensagem(' Informe o ID.');
     setDeleteMensagem('Carregando...');
     try {
       const res = await fetch(
@@ -96,10 +96,10 @@ const ClienteInterface = () => {
         { method: 'DELETE' }
       );
       setDeleteMensagem(
-        res.ok ? '✅ Cliente deletado.' : '❌ Erro ao deletar.'
+        res.ok ? ' Cliente deletado.' : ' Erro ao deletar.'
       );
     } catch {
-      setDeleteMensagem('❌ Erro de conexão.');
+      setDeleteMensagem(' Erro de conexão.');
     }
   };
 
@@ -137,16 +137,16 @@ const ClienteInterface = () => {
     <div className="container">
       <h2>Cliente</h2>
       <div className="menu">
-        <button onClick={() => setSection('cadastro')}>📝 Cadastrar</button>
-        <button onClick={() => setSection('atualizar')}>🔁 Atualizar</button>
-        <button onClick={() => setSection('deletar')}>❌ Deletar</button>
-        <button onClick={() => setSection('listarClientes')}>📋 Listar Clientes</button>
-        <button onClick={() => setSection('restaurantes')}>🍽️ Restaurantes</button>
+        <button onClick={() => setSection('cadastro')}> Cadastrar</button>
+        <button onClick={() => setSection('atualizar')}>Atualizar</button>
+        <button onClick={() => setSection('deletar')}> Deletar</button>
+        <button onClick={() => setSection('listarClientes')}>Listar Clientes</button>
+        <button onClick={() => setSection('restaurantes')}>Restaurantes</button>
       </div>
 
       {section === 'cadastro' && (
         <div className="section">
-          <h3>📝 Cadastrar Novo Cliente</h3>
+          <h3>Cadastrar Novo Cliente</h3>
           <form onSubmit={handleCadastro}>
             <input
               type="text"
@@ -184,7 +184,7 @@ const ClienteInterface = () => {
 
       {section === 'atualizar' && (
         <div className="section">
-          <h3>🔁 Atualizar Cadastro</h3>
+          <h3>Atualizar Cadastro</h3>
           <form onSubmit={handleUpdate}>
             <input
               type="text"
@@ -229,7 +229,7 @@ const ClienteInterface = () => {
 
       {section === 'deletar' && (
         <div className="section">
-          <h3>❌ Deletar Cliente</h3>
+          <h3> Deletar Cliente</h3>
           <input
             type="text"
             placeholder="ID do Cliente para Deletar"
@@ -243,7 +243,7 @@ const ClienteInterface = () => {
 
       {section === 'listarClientes' && (
         <div className="section">
-          <h3>📋 Clientes Cadastrados</h3>
+          <h3>Clientes Cadastrados</h3>
           <button onClick={listarClientes}>Listar Clientes</button>
           {loadingClientes ? (
             <p>Carregando...</p>
@@ -267,7 +267,7 @@ const ClienteInterface = () => {
 
       {section === 'restaurantes' && (
         <div className="section">
-          <h3>🍽️ Restaurantes Disponíveis</h3>
+          <h3>Restaurantes Disponíveis</h3>
           <button onClick={carregarRestaurantes}>Ver Restaurantes</button>
           {loadingRest ? (
             <p>Carregando...</p>

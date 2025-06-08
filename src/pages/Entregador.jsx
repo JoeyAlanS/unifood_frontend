@@ -1,4 +1,3 @@
-// src/pages/Entregador.jsx
 import React, { useState } from "react";
 
 const API_ENTREG = "https://reasonable-happiness-production.up.railway.app/api/entregadores";
@@ -164,9 +163,7 @@ export default function Entregador() {
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setCadastroMsg(
-        `✅ Entregador "${data.nome}" cadastrado com ID ${data.id}!`
-      );
+      setCadastroMsg(`Entregador "${data.nome}" cadastrado com ID ${data.id}!`);
       setNomeCad("");
       setVeiculoCad("");
       setRgCad("");
@@ -195,9 +192,7 @@ export default function Entregador() {
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setAssignMsg(
-        `✅ Entrega ${data.id} atribuída a entregador ${data.entregadorId}`
-      );
+      setAssignMsg(`Entrega ${data.id} atribuída a entregador ${data.entregadorId}`);
     } catch {
       setAssignMsg("Erro ao atribuir entrega.");
     }
@@ -221,7 +216,7 @@ export default function Entregador() {
         }
       );
       if (!res.ok) throw new Error();
-      setUpdEntregaMsg(`✅ Status atualizado para ${novoStatus}.`);
+      setUpdEntregaMsg(`Status atualizado para ${novoStatus}.`);
     } catch {
       setUpdEntregaMsg("Erro ao atualizar status da entrega.");
     }
@@ -236,7 +231,6 @@ export default function Entregador() {
     }
     setLoadingQuery(true);
     try {
-      // pega TODAS as atribuições não finalizadas desse entregador
       const resList = await fetch(
         `${API_ENTREGAS}/deliverer/${entregaIdQuery}/assignments`
       );
@@ -261,7 +255,7 @@ export default function Entregador() {
 
       {/* Listar todos */}
       <section style={{ marginTop: 20 }}>
-        <h3>📋 Listar Entregadores</h3>
+        <h3>Listar Entregadores</h3>
         <button
           className="btn btn-primary"
           onClick={listarEntregadores}
@@ -287,7 +281,7 @@ export default function Entregador() {
 
       {/* Buscar por ID */}
       <section style={{ marginTop: 20 }}>
-        <h3>🔍 Buscar Entregador por ID</h3>
+        <h3>Buscar Entregador por ID</h3>
         <input
           className="form-control"
           placeholder="ID do Entregador"
@@ -322,7 +316,7 @@ export default function Entregador() {
 
       {/* Buscar por Nome */}
       <section style={{ marginTop: 20 }}>
-        <h3>🔍 Buscar Entregador por Nome</h3>
+        <h3>Buscar Entregador por Nome</h3>
         <input
           className="form-control"
           placeholder="Nome do Entregador"
@@ -380,7 +374,7 @@ export default function Entregador() {
 
       {/* Cadastrar novo entregador */}
       <section style={{ marginTop: 20 }}>
-        <h3>➕ Cadastrar Entregador</h3>
+        <h3>Cadastrar Entregador</h3>
         <input
           className="form-control"
           placeholder="Nome"
@@ -438,7 +432,7 @@ export default function Entregador() {
 
       {/* Atribuir entrega */}
       <section style={{ marginTop: 30 }}>
-        <h3>📦 Atribuir Entrega a um Entregador</h3>
+        <h3>Atribuir Entrega a um Entregador</h3>
         <input
           className="form-control"
           placeholder="ID do Pedido"
@@ -457,7 +451,7 @@ export default function Entregador() {
 
       {/* ————— Verificar Status de Entrega ————— */}
       <section style={{ marginTop: 30 }}>
-        <h3>🔎 Consultar Status de Entrega</h3>
+        <h3>Consultar Status de Entrega</h3>
         <input
           className="form-control"
           placeholder="ID do Entregador"
@@ -488,7 +482,7 @@ export default function Entregador() {
 
       {/* Atualizar status da entrega */}
       <section style={{ marginTop: 30 }}>
-        <h3>🔄 Atualizar Status da Entrega</h3>
+        <h3>Atualizar Status da Entrega</h3>
         <input
           className="form-control"
           placeholder="ID da Entrega"
