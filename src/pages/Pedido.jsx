@@ -1,7 +1,7 @@
 // src/Pedidos.jsx
 import React, { useEffect, useState } from "react";
 
-const API_BASE_LOCAL = "http://localhost:8081/api/pedidos";
+
 const API_BASE_PROD = "https://pedido-backend-production.up.railway.app/api/pedidos";
 
 export default function Pedidos() {
@@ -39,7 +39,7 @@ export default function Pedidos() {
   // --- Busca nome cliente para saudação ---
   useEffect(() => {
     if (!pedido.clienteId) return;
-    fetch(`${API_BASE_LOCAL}/cliente/${pedido.clienteId}/nome`)
+    fetch(`${API_BASE_PROD}/cliente/${pedido.clienteId}/nome`)
       .then(res => res.json())
       .then(data => setNomeCliente(data.nome || "Cliente"))
       .catch(() => setNomeCliente("Cliente"));
@@ -48,7 +48,7 @@ export default function Pedidos() {
   // --- Carrega cardápio ---
   useEffect(() => {
     if (tela === "cardapio") {
-      fetch(`${API_BASE_LOCAL}/itensCardapio`)
+      fetch(`${API_BASE_PROD}/itensCardapio`)
         .then(res => res.json())
         .then(data => setCardapio(Array.isArray(data) ? data : []))
         .catch(() => setCardapio([]));
@@ -60,19 +60,19 @@ export default function Pedidos() {
     const exists = pedido.itens.find(i => i.produtoId === item.id);
     const novos = exists
       ? pedido.itens.map(i =>
-          i.produtoId === item.id
-            ? { ...i, quantidade: i.quantidade + 1 }
-            : i
-        )
+        i.produtoId === item.id
+          ? { ...i, quantidade: i.quantidade + 1 }
+          : i
+      )
       : [
-          ...pedido.itens,
-          {
-            produtoId: item.id,
-            nomeProduto: item.nome,
-            quantidade: 1,
-            precoUnitario: item.preco,
-          },
-        ];
+        ...pedido.itens,
+        {
+          produtoId: item.id,
+          nomeProduto: item.nome,
+          quantidade: 1,
+          precoUnitario: item.preco,
+        },
+      ];
     setPedido(p => ({ ...p, itens: novos }));
   };
   const removeItem = id => {
@@ -92,7 +92,7 @@ export default function Pedidos() {
   const efetuarPedido = async () => {
     if (!pedido.itens.length) return;
     try {
-      const res = await fetch(API_BASE_LOCAL, {
+      const res = await fetch(API_BASE_PROD, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pedido),
@@ -111,12 +111,12 @@ export default function Pedidos() {
     if (tela === "acompanhamento" && ultimoPedidoId) {
       (async () => {
         try {
-          const res = await fetch(`${API_BASE_LOCAL}/${ultimoPedidoId}`);
+          const res = await fetch(`${API_BASE_PROD}/${ultimoPedidoId}`);
           const d = await res.json();
           let nomeEnt = "-";
           if (d.entregadorId) {
             const nr = await fetch(
-              `${API_BASE_LOCAL}/entregador/${d.entregadorId}/nome`
+              `${API_BASE_PROD}/entregador/${d.entregadorId}/nome`
             );
             const nd = await nr.json();
             nomeEnt = nd.nome || d.entregadorId;
@@ -141,7 +141,7 @@ export default function Pedidos() {
   const buscarPedidosCliente = async () => {
     try {
       const res = await fetch(
-        `${API_BASE_LOCAL}/cliente/${pedido.clienteId}`
+        `${API_BASE_PROD}/cliente/${pedido.clienteId}`
       );
       const data = await res.json();
       setPedidosCliente(Array.isArray(data) ? data : []);
@@ -323,7 +323,7 @@ export default function Pedidos() {
       </button>
 
       {/* Seções estáticas JSON */}
-      <hr/>
+      <hr />
       <h2>📦 JSON CRUD (fallback)</h2>
 
       <div className="section mb-4">

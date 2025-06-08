@@ -1,39 +1,47 @@
+// src/pages/Entregador.jsx
 import React, { useState } from "react";
 
 const API = "https://reasonable-happiness-production.up.railway.app/api/entregadores";
 
 export default function Entregador() {
+  // lista
   const [entregadores, setEntregadores] = useState([]);
   const [loadingList, setLoadingList] = useState(false);
 
+  // busca por ID
   const [idBuscar, setIdBuscar] = useState("");
   const [entregadorInfo, setEntregadorInfo] = useState(null);
   const [loadingBusca, setLoadingBusca] = useState(false);
 
+  // busca por nome
   const [nomeBuscar, setNomeBuscar] = useState("");
   const [resultadoNome, setResultadoNome] = useState([]);
   const [loadingNome, setLoadingNome] = useState(false);
 
+  // atualização de disponibilidade
   const [idStatus, setIdStatus] = useState("");
   const [disponivel, setDisponivel] = useState("true");
   const [statusMsg, setStatusMsg] = useState("");
 
+  // cadastro
   const [nomeCad, setNomeCad] = useState("");
   const [veiculoCad, setVeiculoCad] = useState("");
   const [rgCad, setRgCad] = useState("");
   const [cnhCad, setCnhCad] = useState("");
   const [seguroCad, setSeguroCad] = useState("");
   const [contaCad, setContaCad] = useState("");
+  const [disponivelCad, setDisponivelCad] = useState(true);
   const [cadastroMsg, setCadastroMsg] = useState("");
 
-  // Listar entregadores disponíveis
+  // ————————————————————————————————————————————
+  // Listar entregadores (todos)
   async function listarEntregadores() {
     setLoadingList(true);
     try {
-      const res = await fetch(`${API}/disponiveis`);
+      const res = await fetch(API);
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setEntregadores(data);
+      setEntregadores(Array.isArray(data) ? data : []);
     } catch {
       setEntregadores([]);
       alert("Erro ao buscar entregadores.");
@@ -42,9 +50,13 @@ export default function Entregador() {
     }
   }
 
+  // ————————————————————————————————————————————
   // Buscar por ID
   async function buscarEntregador() {
-    if (!idBuscar.trim()) return setEntregadorInfo({ error: "Informe o ID." });
+    if (!idBuscar.trim()) {
+      setEntregadorInfo({ error: "Informe o ID." });
+      return;
+    }
     setLoadingBusca(true);
     try {
       const res = await fetch(`${API}/${idBuscar}`);
@@ -58,18 +70,26 @@ export default function Entregador() {
     }
   }
 
+  // ————————————————————————————————————————————
   // Buscar por nome
   async function buscarEntregadorPorNome() {
-    if (!nomeBuscar.trim()) return setResultadoNome([{ error: "Informe o nome." }]);
+    if (!nomeBuscar.trim()) {
+      setResultadoNome([{ error: "Informe o nome." }]);
+      return;
+    }
     setLoadingNome(true);
     try {
-      const res = await fetch(`${API}/disponiveis`);
+      const res = await fetch(API);
+      if (!res.ok) throw new Error();
       const list = await res.json();
+      if (!Array.isArray(list)) throw new Error();
       const filtrados = list.filter(e =>
         e.nome.toLowerCase().includes(nomeBuscar.toLowerCase())
       );
       setResultadoNome(
-        filtrados.length ? filtrados : [{ error: "Nenhum entregador encontrado." }]
+        filtrados.length
+          ? filtrados
+          : [{ error: "Nenhum entregador encontrado." }]
       );
     } catch {
       setResultadoNome([{ error: "Erro ao buscar entregadores." }]);
@@ -78,9 +98,13 @@ export default function Entregador() {
     }
   }
 
+  // ————————————————————————————————————————————
   // Atualizar disponibilidade
   async function alterarStatus() {
-    if (!idStatus.trim()) return setStatusMsg("Informe o ID.");
+    if (!idStatus.trim()) {
+      setStatusMsg("Informe o ID.");
+      return;
+    }
     setStatusMsg("Atualizando...");
     try {
       const res = await fetch(
@@ -93,10 +117,19 @@ export default function Entregador() {
     }
   }
 
+  // ————————————————————————————————————————————
   // Cadastrar entregador
   async function cadastrarEntregador() {
-    if (!nomeCad || !veiculoCad || !rgCad || !cnhCad || !seguroCad || !contaCad) {
-      return setCadastroMsg("Por favor, preencha todos os campos.");
+    if (
+      !nomeCad ||
+      !veiculoCad ||
+      !rgCad ||
+      !cnhCad ||
+      !seguroCad ||
+      !contaCad
+    ) {
+      setCadastroMsg("Por favor, preencha todos os campos.");
+      return;
     }
     setCadastroMsg("Cadastrando...");
     try {
@@ -110,37 +143,51 @@ export default function Entregador() {
           cnh: cnhCad,
           seguroVeiculo: seguroCad,
           contaBancaria: contaCad,
+          disponivel: disponivelCad
         }),
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setCadastroMsg(`Entregador "${data.nome}" cadastrado com ID ${data.id}!`);
+      setCadastroMsg(
+        `✅ Entregador "${data.nome}" cadastrado com ID ${data.id}!`
+      );
+      // reset dos campos
       setNomeCad("");
       setVeiculoCad("");
       setRgCad("");
       setCnhCad("");
       setSeguroCad("");
       setContaCad("");
+      setDisponivelCad(true);
     } catch {
       setCadastroMsg("Erro ao cadastrar entregador.");
     }
   }
 
+  // ————————————————————————————————————————————
+  // JSX
   return (
     <div style={{ fontFamily: "Arial, sans-serif", padding: 20, maxWidth: 800, margin: "auto" }}>
       <h2>🚴 Entregador</h2>
 
-      {/* Listar */}
+      {/* Listar todos */}
       <section style={{ marginTop: 20 }}>
-        <h3>📋 Listar Entregadores Disponíveis</h3>
+        <h3>📋 Listar Entregadores</h3>
         <button className="btn btn-primary" onClick={listarEntregadores} disabled={loadingList}>
           {loadingList ? "Carregando..." : "Listar Entregadores"}
         </button>
         {entregadores.map(e => (
-          <div key={e.id} className="card">
+          <div key={e.id} className="card p-2 my-2">
             <strong>{e.nome}</strong><br />
             ID: {e.id}<br />
-            Status: {e.disponivel ? "Disponível" : "Indisponível"}
+            Veículo: {e.veiculo}<br />
+            RG: {e.rg}<br />
+            CNH: {e.cnh}<br />
+            Seguro: {e.seguroVeiculo}<br />
+            Conta: {e.contaBancaria}<br />
+            Disponível: {e.disponivel ? "Sim" : "Não"}<br />
+            Criado em: {new Date(e.criadoEm).toLocaleString()}<br />
+            Atualizado em: {new Date(e.atualizadoEm).toLocaleString()}
           </div>
         ))}
       </section>
@@ -157,15 +204,24 @@ export default function Entregador() {
         <button className="btn btn-primary mt-2" onClick={buscarEntregador} disabled={loadingBusca}>
           {loadingBusca ? "Buscando..." : "Buscar"}
         </button>
-        {entregadorInfo?.error ? (
+
+        {entregadorInfo?.error && (
           <p className="text-danger">{entregadorInfo.error}</p>
-        ) : entregadorInfo ? (
-          <div className="card">
+        )}
+        {entregadorInfo && !entregadorInfo.error && (
+          <div className="card p-2 my-2">
             <strong>{entregadorInfo.nome}</strong><br />
             ID: {entregadorInfo.id}<br />
-            Status: {entregadorInfo.disponivel ? "Disponível" : "Indisponível"}
+            Veículo: {entregadorInfo.veiculo}<br />
+            RG: {entregadorInfo.rg}<br />
+            CNH: {entregadorInfo.cnh}<br />
+            Seguro: {entregadorInfo.seguroVeiculo}<br />
+            Conta: {entregadorInfo.contaBancaria}<br />
+            Disponível: {entregadorInfo.disponivel ? "Sim" : "Não"}<br />
+            Criado em: {new Date(entregadorInfo.criadoEm).toLocaleString()}<br />
+            Atualizado em: {new Date(entregadorInfo.atualizadoEm).toLocaleString()}
           </div>
-        ) : null}
+        )}
       </section>
 
       {/* Buscar por Nome */}
@@ -180,20 +236,23 @@ export default function Entregador() {
         <button className="btn btn-primary mt-2" onClick={buscarEntregadorPorNome} disabled={loadingNome}>
           {loadingNome ? "Buscando..." : "Buscar"}
         </button>
+
         {resultadoNome.map((e, i) =>
           e.error ? (
             <p key={i} className="text-danger">{e.error}</p>
           ) : (
-            <div key={e.id} className="card">
+            <div key={e.id} className="card p-2 my-2">
               <strong>{e.nome}</strong><br />
               ID: {e.id}<br />
-              Status: {e.disponivel ? "Disponível" : "Indisponível"}
+              Disponível: {e.disponivel ? "Sim" : "Não"}<br />
+              Criado em: {new Date(e.criadoEm).toLocaleString()}<br />
+              Atualizado em: {new Date(e.atualizadoEm).toLocaleString()}
             </div>
           )
         )}
       </section>
 
-      {/* Atualizar status */}
+      {/* Atualizar disponibilidade */}
       <section style={{ marginTop: 20 }}>
         <h3>🔄 Atualizar Disponibilidade</h3>
         <input
@@ -213,10 +272,14 @@ export default function Entregador() {
         <button className="btn btn-primary mt-2" onClick={alterarStatus}>
           Atualizar Status
         </button>
-        {statusMsg && <p className={statusMsg.startsWith("Erro") ? "text-danger" : "text-success"}>{statusMsg}</p>}
+        {statusMsg && (
+          <p className={statusMsg.startsWith("Erro") ? "text-danger" : "text-success"}>
+            {statusMsg}
+          </p>
+        )}
       </section>
 
-      {/* Cadastrar */}
+      {/* Cadastrar novo entregador */}
       <section style={{ marginTop: 20 }}>
         <h3>➕ Cadastrar Entregador</h3>
         <input
@@ -255,10 +318,23 @@ export default function Entregador() {
           value={contaCad}
           onChange={e => setContaCad(e.target.value)}
         />
-        <button className="btn btn-primary mt-2" onClick={cadastrarEntregador}>
+        <label className="form-check-label mt-2">
+          <input
+            type="checkbox"
+            className="form-check-input me-2"
+            checked={disponivelCad}
+            onChange={e => setDisponivelCad(e.target.checked)}
+          />
+          Disponível por padrão
+        </label>
+        <button className="btn btn-success mt-2" onClick={cadastrarEntregador}>
           Cadastrar
         </button>
-        {cadastroMsg && <p className={cadastroMsg.startsWith("❌") ? "text-danger" : "text-success"}>{cadastroMsg}</p>}
+        {cadastroMsg && (
+          <p className={cadastroMsg.startsWith("Erro") ? "text-danger" : "text-success"}>
+            {cadastroMsg}
+          </p>
+        )}
       </section>
     </div>
   );
