@@ -1,4 +1,3 @@
-// src/pages/Entregador.jsx
 import React, { useState } from "react";
 
 const API_ENTREG = "https://reasonable-happiness-production.up.railway.app/api/entregadores";
@@ -164,9 +163,7 @@ export default function Entregador() {
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setCadastroMsg(
-        `Entregador "${data.nome}" cadastrado com ID ${data.id}!`
-      );
+      setCadastroMsg(`Entregador "${data.nome}" cadastrado com ID ${data.id}!`);
       setNomeCad("");
       setVeiculoCad("");
       setRgCad("");
@@ -195,9 +192,7 @@ export default function Entregador() {
       });
       if (!res.ok) throw new Error();
       const data = await res.json();
-      setAssignMsg(
-        `Entrega ${data.id} atribuída a entregador ${data.entregadorId}`
-      );
+      setAssignMsg(`Entrega ${data.id} atribuída a entregador ${data.entregadorId}`);
     } catch {
       setAssignMsg("Erro ao atribuir entrega.");
     }
