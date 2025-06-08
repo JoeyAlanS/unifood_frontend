@@ -1,29 +1,35 @@
 // src/pages/Entregador.jsx
 import React, { useState } from "react";
 
-const API = "https://reasonable-happiness-production.up.railway.app/api/entregadores";
+const API_ENTREG = "https://reasonable-happiness-production.up.railway.app/api/entregadores";
+const API_ENTREGAS = "https://reasonable-happiness-production.up.railway.app/api/deliveries";
 
 export default function Entregador() {
-  // lista
+  // ——— Consulta de status de entrega ———
+  const [entregaIdQuery, setEntregaIdQuery] = useState("");
+  const [statusConsulta, setStatusConsulta] = useState(null);
+  const [loadingQuery, setLoadingQuery] = useState(false);
+
+  // ——— Listagem de entregadores ———
   const [entregadores, setEntregadores] = useState([]);
   const [loadingList, setLoadingList] = useState(false);
 
-  // busca por ID
+  // ——— Busca de entregador por ID ———
   const [idBuscar, setIdBuscar] = useState("");
   const [entregadorInfo, setEntregadorInfo] = useState(null);
   const [loadingBusca, setLoadingBusca] = useState(false);
 
-  // busca por nome
+  // ——— Busca de entregador por Nome ———
   const [nomeBuscar, setNomeBuscar] = useState("");
   const [resultadoNome, setResultadoNome] = useState([]);
   const [loadingNome, setLoadingNome] = useState(false);
 
-  // atualização de disponibilidade
+  // ——— Atualização de disponibilidade ———
   const [idStatus, setIdStatus] = useState("");
   const [disponivel, setDisponivel] = useState("true");
   const [statusMsg, setStatusMsg] = useState("");
 
-  // cadastro
+  // ——— Cadastro de entregador ———
   const [nomeCad, setNomeCad] = useState("");
   const [veiculoCad, setVeiculoCad] = useState("");
   const [rgCad, setRgCad] = useState("");
@@ -33,12 +39,21 @@ export default function Entregador() {
   const [disponivelCad, setDisponivelCad] = useState(true);
   const [cadastroMsg, setCadastroMsg] = useState("");
 
-  // ————————————————————————————————————————————
-  // Listar entregadores (todos)
+  // ——— Atribuição de entrega ———
+  const [orderIdAssign, setOrderIdAssign] = useState("");
+  const [assignMsg, setAssignMsg] = useState("");
+
+  // ——— Atualização de status da entrega ———
+  const [entregaIdUpd, setEntregaIdUpd] = useState("");
+  const [novoStatus, setNovoStatus] = useState("EM_ROTA");
+  const [updEntregaMsg, setUpdEntregaMsg] = useState("");
+
+  // —————————————————————————————————————————
+  // Listar todos entregadores
   async function listarEntregadores() {
     setLoadingList(true);
     try {
-      const res = await fetch(API);
+      const res = await fetch(API_ENTREG);
       if (!res.ok) throw new Error();
       const data = await res.json();
       setEntregadores(Array.isArray(data) ? data : []);
@@ -50,8 +65,8 @@ export default function Entregador() {
     }
   }
 
-  // ————————————————————————————————————————————
-  // Buscar por ID
+  // —————————————————————————————————————————
+  // Buscar entregador por ID
   async function buscarEntregador() {
     if (!idBuscar.trim()) {
       setEntregadorInfo({ error: "Informe o ID." });
@@ -59,7 +74,7 @@ export default function Entregador() {
     }
     setLoadingBusca(true);
     try {
-      const res = await fetch(`${API}/${idBuscar}`);
+      const res = await fetch(`${API_ENTREG}/${idBuscar}`);
       if (!res.ok) throw new Error();
       const data = await res.json();
       setEntregadorInfo(data);
@@ -70,8 +85,8 @@ export default function Entregador() {
     }
   }
 
-  // ————————————————————————————————————————————
-  // Buscar por nome
+  // —————————————————————————————————————————
+  // Buscar entregador por Nome
   async function buscarEntregadorPorNome() {
     if (!nomeBuscar.trim()) {
       setResultadoNome([{ error: "Informe o nome." }]);
@@ -79,13 +94,14 @@ export default function Entregador() {
     }
     setLoadingNome(true);
     try {
-      const res = await fetch(API);
+      const res = await fetch(API_ENTREG);
       if (!res.ok) throw new Error();
       const list = await res.json();
-      if (!Array.isArray(list)) throw new Error();
-      const filtrados = list.filter(e =>
-        e.nome.toLowerCase().includes(nomeBuscar.toLowerCase())
-      );
+      const filtrados = Array.isArray(list)
+        ? list.filter(e =>
+          e.nome.toLowerCase().includes(nomeBuscar.toLowerCase())
+        )
+        : [];
       setResultadoNome(
         filtrados.length
           ? filtrados
@@ -98,7 +114,7 @@ export default function Entregador() {
     }
   }
 
-  // ————————————————————————————————————————————
+  // —————————————————————————————————————————
   // Atualizar disponibilidade
   async function alterarStatus() {
     if (!idStatus.trim()) {
@@ -108,7 +124,7 @@ export default function Entregador() {
     setStatusMsg("Atualizando...");
     try {
       const res = await fetch(
-        `${API}/${idStatus}/status?disponivel=${disponivel}`,
+        `${API_ENTREG}/${idStatus}/status?disponivel=${disponivel}`,
         { method: "PUT" }
       );
       setStatusMsg(res.ok ? "Status atualizado!" : "Erro ao atualizar status.");
@@ -117,7 +133,7 @@ export default function Entregador() {
     }
   }
 
-  // ————————————————————————————————————————————
+  // —————————————————————————————————————————
   // Cadastrar entregador
   async function cadastrarEntregador() {
     if (
@@ -133,7 +149,7 @@ export default function Entregador() {
     }
     setCadastroMsg("Cadastrando...");
     try {
-      const res = await fetch(API, {
+      const res = await fetch(API_ENTREG, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -151,7 +167,6 @@ export default function Entregador() {
       setCadastroMsg(
         `✅ Entregador "${data.nome}" cadastrado com ID ${data.id}!`
       );
-      // reset dos campos
       setNomeCad("");
       setVeiculoCad("");
       setRgCad("");
@@ -164,8 +179,82 @@ export default function Entregador() {
     }
   }
 
-  // ————————————————————————————————————————————
-  // JSX
+  // —————————————————————————————————————————
+  // Atribuir entrega a um pedido
+  async function atribuirEntrega() {
+    if (!orderIdAssign.trim()) {
+      setAssignMsg("Informe o ID do pedido.");
+      return;
+    }
+    setAssignMsg("Atribuindo...");
+    try {
+      const res = await fetch(`${API_ENTREGAS}/assign`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: orderIdAssign }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setAssignMsg(
+        `✅ Entrega ${data.id} atribuída a entregador ${data.entregadorId}`
+      );
+    } catch {
+      setAssignMsg("Erro ao atribuir entrega.");
+    }
+  }
+
+  // —————————————————————————————————————————
+  // Atualizar status da entrega
+  async function atualizarStatusEntrega() {
+    if (!entregaIdUpd.trim()) {
+      setUpdEntregaMsg("Informe o ID da entrega.");
+      return;
+    }
+    setUpdEntregaMsg("Atualizando status...");
+    try {
+      const res = await fetch(
+        `${API_ENTREGAS}/${entregaIdUpd}/status`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: novoStatus }),
+        }
+      );
+      if (!res.ok) throw new Error();
+      setUpdEntregaMsg(`✅ Status atualizado para ${novoStatus}.`);
+    } catch {
+      setUpdEntregaMsg("Erro ao atualizar status da entrega.");
+    }
+  }
+
+  // —————————————————————————————————————————
+  // Consultar status de entrega (pelo ID do ENTREGADOR)
+  async function consultarStatusEntrega() {
+    if (!entregaIdQuery.trim()) {
+      setStatusConsulta({ error: "Informe o ID do entregador." });
+      return;
+    }
+    setLoadingQuery(true);
+    try {
+      // pega TODAS as atribuições não finalizadas desse entregador
+      const resList = await fetch(
+        `${API_ENTREGAS}/deliverer/${entregaIdQuery}/assignments`
+      );
+      if (!resList.ok) throw new Error();
+      const lista = await resList.json();
+      setStatusConsulta(
+        Array.isArray(lista) && lista.length
+          ? lista
+          : { error: "Não há entregas em rota para este entregador." }
+      );
+    } catch {
+      setStatusConsulta({ error: "Erro ao consultar entrega." });
+    } finally {
+      setLoadingQuery(false);
+    }
+  }
+
+
   return (
     <div style={{ fontFamily: "Arial, sans-serif", padding: 20, maxWidth: 800, margin: "auto" }}>
       <h2>🚴 Entregador</h2>
@@ -173,7 +262,11 @@ export default function Entregador() {
       {/* Listar todos */}
       <section style={{ marginTop: 20 }}>
         <h3>📋 Listar Entregadores</h3>
-        <button className="btn btn-primary" onClick={listarEntregadores} disabled={loadingList}>
+        <button
+          className="btn btn-primary"
+          onClick={listarEntregadores}
+          disabled={loadingList}
+        >
           {loadingList ? "Carregando..." : "Listar Entregadores"}
         </button>
         {entregadores.map(e => (
@@ -201,10 +294,13 @@ export default function Entregador() {
           value={idBuscar}
           onChange={e => setIdBuscar(e.target.value)}
         />
-        <button className="btn btn-primary mt-2" onClick={buscarEntregador} disabled={loadingBusca}>
+        <button
+          className="btn btn-primary mt-2"
+          onClick={buscarEntregador}
+          disabled={loadingBusca}
+        >
           {loadingBusca ? "Buscando..." : "Buscar"}
         </button>
-
         {entregadorInfo?.error && (
           <p className="text-danger">{entregadorInfo.error}</p>
         )}
@@ -233,10 +329,13 @@ export default function Entregador() {
           value={nomeBuscar}
           onChange={e => setNomeBuscar(e.target.value)}
         />
-        <button className="btn btn-primary mt-2" onClick={buscarEntregadorPorNome} disabled={loadingNome}>
+        <button
+          className="btn btn-primary mt-2"
+          onClick={buscarEntregadorPorNome}
+          disabled={loadingNome}
+        >
           {loadingNome ? "Buscando..." : "Buscar"}
         </button>
-
         {resultadoNome.map((e, i) =>
           e.error ? (
             <p key={i} className="text-danger">{e.error}</p>
@@ -333,6 +432,83 @@ export default function Entregador() {
         {cadastroMsg && (
           <p className={cadastroMsg.startsWith("Erro") ? "text-danger" : "text-success"}>
             {cadastroMsg}
+          </p>
+        )}
+      </section>
+
+      {/* Atribuir entrega */}
+      <section style={{ marginTop: 30 }}>
+        <h3>📦 Atribuir Entrega a um Entregador</h3>
+        <input
+          className="form-control"
+          placeholder="ID do Pedido"
+          value={orderIdAssign}
+          onChange={e => setOrderIdAssign(e.target.value)}
+        />
+        <button className="btn btn-primary mt-2" onClick={atribuirEntrega}>
+          Atribuir Entrega
+        </button>
+        {assignMsg && (
+          <p className={assignMsg.startsWith("Erro") ? "text-danger" : "text-success"}>
+            {assignMsg}
+          </p>
+        )}
+      </section>
+
+      {/* ————— Verificar Status de Entrega ————— */}
+      <section style={{ marginTop: 30 }}>
+        <h3>🔎 Consultar Status de Entrega</h3>
+        <input
+          className="form-control"
+          placeholder="ID do Entregador"
+          value={entregaIdQuery}
+          onChange={e => setEntregaIdQuery(e.target.value)}
+        />
+        <button
+          className="btn btn-primary mt-2"
+          onClick={consultarStatusEntrega}
+          disabled={loadingQuery}
+        >
+          {loadingQuery ? "Consultando..." : "Consultar Status"}
+        </button>
+
+        {statusConsulta?.error && (
+          <p className="text-danger">{statusConsulta.error}</p>
+        )}
+
+        {Array.isArray(statusConsulta) && statusConsulta.map(ent => (
+          <div key={ent.id} className="card p-2 my-2">
+            <strong>Entrega ID:</strong> {ent.id}<br />
+            <strong>Pedido ID:</strong> {ent.orderId}<br />
+            <strong>Status:</strong> {ent.status}<br />
+          </div>
+        ))}
+      </section>
+
+
+      {/* Atualizar status da entrega */}
+      <section style={{ marginTop: 30 }}>
+        <h3>🔄 Atualizar Status da Entrega</h3>
+        <input
+          className="form-control"
+          placeholder="ID da Entrega"
+          value={entregaIdUpd}
+          onChange={e => setEntregaIdUpd(e.target.value)}
+        />
+        <select
+          className="form-control mt-2"
+          value={novoStatus}
+          onChange={e => setNovoStatus(e.target.value)}
+        >
+          <option value="EM_ROTA">EM_ROTA</option>
+          <option value="ENTREGUE">ENTREGUE</option>
+        </select>
+        <button className="btn btn-primary mt-2" onClick={atualizarStatusEntrega}>
+          Atualizar Status
+        </button>
+        {updEntregaMsg && (
+          <p className={updEntregaMsg.startsWith("Erro") ? "text-danger" : "text-success"}>
+            {updEntregaMsg}
           </p>
         )}
       </section>
