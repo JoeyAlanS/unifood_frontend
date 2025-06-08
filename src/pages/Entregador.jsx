@@ -4,6 +4,10 @@ const API_ENTREG = "https://reasonable-happiness-production.up.railway.app/api/e
 const API_ENTREGAS = "https://reasonable-happiness-production.up.railway.app/api/deliveries";
 
 export default function Entregador() {
+  // ——— Listar entregas ativas (todas) ———
+  const [entregasAtivas, setEntregasAtivas] = useState([]);
+  const [loadingAtivas, setLoadingAtivas] = useState(false);
+  const [errorAtivas, setErrorAtivas] = useState("");
   // ——— Consulta de status de entrega ———
   const [entregaIdQuery, setEntregaIdQuery] = useState("");
   const [statusConsulta, setStatusConsulta] = useState(null);
@@ -247,11 +251,28 @@ export default function Entregador() {
       setLoadingQuery(false);
     }
   }
+  // —————————————————————————————————————————
+  // Listar todas as entregas ativas
+  async function listarEntregasAtivas() {
+    setLoadingAtivas(true);
+    setErrorAtivas("");
+    try {
+      const res = await fetch(`${API_ENTREGAS}/deliverer/active`);
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      setEntregasAtivas(Array.isArray(data) ? data : []);
+    } catch {
+      setErrorAtivas("Erro ao buscar entregas ativas.");
+      setEntregasAtivas([]);
+    } finally {
+      setLoadingAtivas(false);
+    }
+  }
 
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", padding: 20, maxWidth: 800, margin: "auto" }}>
-      <h2>🚴 Entregador</h2>
+      <h2>Entregador</h2>
 
       {/* Listar todos */}
       <section style={{ marginTop: 20 }}>
@@ -347,7 +368,7 @@ export default function Entregador() {
 
       {/* Atualizar disponibilidade */}
       <section style={{ marginTop: 20 }}>
-        <h3>🔄 Atualizar Disponibilidade</h3>
+        <h3>Atualizar Disponibilidade</h3>
         <input
           className="form-control"
           placeholder="ID do Entregador"
@@ -448,6 +469,28 @@ export default function Entregador() {
           </p>
         )}
       </section>
+
+      {/* Listar todas as entregas ativas */}
+      <section style={{ marginTop: 20 }}>
+        <h3>Entregas Ativas</h3>
+        <button
+          className="btn btn-warning"
+          onClick={listarEntregasAtivas}
+          disabled={loadingAtivas}
+        >
+          {loadingAtivas ? "Carregando..." : "Listar Ativas"}
+        </button>
+        {errorAtivas && <p className="text-danger">{errorAtivas}</p>}
+        {entregasAtivas.map(ent => (
+          <div key={ent.id} className="card p-2 my-2">
+            <strong>Entrega ID:</strong> {ent.id}<br />
+            <strong>Pedido ID:</strong> {ent.orderId}<br />
+            <strong>Entregador ID:</strong> {ent.entregadorId}<br />
+            <strong>Status:</strong> {ent.status}
+          </div>
+        ))}
+      </section>
+
 
       {/* ————— Verificar Status de Entrega ————— */}
       <section style={{ marginTop: 30 }}>
