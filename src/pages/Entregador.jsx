@@ -128,11 +128,11 @@ export default function Entregador() {
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", padding: 20, maxWidth: 800, margin: "auto" }}>
-      <h2>🚴 Entregador</h2>
+      <h2>Entregador</h2>
 
       {/* Listar */}
       <section style={{ marginTop: 20 }}>
-        <h3>📋 Listar Entregadores Disponíveis</h3>
+        <h3>Listar Entregadores Disponíveis</h3>
         <button className="btn btn-primary" onClick={listarEntregadores} disabled={loadingList}>
           {loadingList ? "Carregando..." : "Listar Entregadores"}
         </button>
@@ -147,7 +147,7 @@ export default function Entregador() {
 
       {/* Buscar por ID */}
       <section style={{ marginTop: 20 }}>
-        <h3>🔍 Buscar Entregador por ID</h3>
+        <h3>Buscar Entregador por ID</h3>
         <input
           className="form-control"
           placeholder="ID do Entregador"
@@ -170,7 +170,7 @@ export default function Entregador() {
 
       {/* Buscar por Nome */}
       <section style={{ marginTop: 20 }}>
-        <h3>🔍 Buscar Entregador por Nome</h3>
+        <h3>Buscar Entregador por Nome</h3>
         <input
           className="form-control"
           placeholder="Nome do Entregador"
@@ -195,7 +195,7 @@ export default function Entregador() {
 
       {/* Atualizar status */}
       <section style={{ marginTop: 20 }}>
-        <h3>🔄 Atualizar Disponibilidade</h3>
+        <h3>Atualizar Disponibilidade</h3>
         <input
           className="form-control"
           placeholder="ID do Entregador"
@@ -218,7 +218,7 @@ export default function Entregador() {
 
       {/* Cadastrar */}
       <section style={{ marginTop: 20 }}>
-        <h3>➕ Cadastrar Entregador</h3>
+        <h3>Cadastrar Entregador</h3>
         <input
           className="form-control"
           placeholder="Nome"
@@ -258,7 +258,7 @@ export default function Entregador() {
         <button className="btn btn-primary mt-2" onClick={cadastrarEntregador}>
           Cadastrar
         </button>
-        {cadastroMsg && <p className={cadastroMsg.startsWith("❌") ? "text-danger" : "text-success"}>{cadastroMsg}</p>}
+        {cadastroMsg && <p className={cadastroMsg.startsWith("") ? "text-danger" : "text-success"}>{cadastroMsg}</p>}
       </section>
     </div>
   );

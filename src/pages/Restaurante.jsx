@@ -27,16 +27,16 @@ export default function Restaurante() {
         body: JSON.stringify({ nome, cnpj, categoria, endereco }),
       });
       if (res.ok) {
-        setCadastroMensagem("✅ Restaurante cadastrado com sucesso!");
+        setCadastroMensagem(" Restaurante cadastrado com sucesso!");
         setNome("");
         setCnpj("");
         setCategoria("");
         setEndereco("");
       } else {
-        setCadastroMensagem("❌ Erro ao cadastrar restaurante.");
+        setCadastroMensagem(" Erro ao cadastrar restaurante.");
       }
     } catch {
-      setCadastroMensagem("❌ Erro de conexão.");
+      setCadastroMensagem(" Erro de conexão.");
     }
   }
 
@@ -58,30 +58,30 @@ export default function Restaurante() {
   // Deletar restaurante
   async function deletarRestaurante() {
     if (!idDeletar.trim()) {
-      setDeleteMensagem("❌ Informe o ID.");
+      setDeleteMensagem(" Informe o ID.");
       return;
     }
     setDeleteMensagem("Deletando...");
     try {
       const res = await fetch(`${API}/${idDeletar}`, { method: "DELETE" });
       if (res.ok) {
-        setDeleteMensagem("✅ Restaurante deletado.");
+        setDeleteMensagem(" Restaurante deletado.");
         setIdDeletar("");
       } else {
-        setDeleteMensagem("❌ Erro ao deletar restaurante.");
+        setDeleteMensagem(" Erro ao deletar restaurante.");
       }
     } catch {
-      setDeleteMensagem("❌ Erro de conexão.");
+      setDeleteMensagem(" Erro de conexão.");
     }
   }
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", padding: 20, maxWidth: 800, margin: "auto" }}>
-      <h2>🏬 Restaurante</h2>
+      <h2> Restaurante</h2>
 
       {/* Cadastrar */}
       <section style={{ marginTop: 20 }}>
-        <h3>📝 Cadastrar Restaurante</h3>
+        <h3>Cadastrar Restaurante</h3>
         <form onSubmit={handleCadastro}>
           <input
             className="form-control"
@@ -116,7 +116,7 @@ export default function Restaurante() {
           </button>
         </form>
         {cadastroMensagem && (
-          <p className={cadastroMensagem.startsWith("❌") ? "text-danger" : "text-success"}>
+          <p className={cadastroMensagem.startsWith("") ? "text-danger" : "text-success"}>
             {cadastroMensagem}
           </p>
         )}
@@ -145,7 +145,7 @@ export default function Restaurante() {
 
       {/* Deletar */}
       <section style={{ marginTop: 20 }}>
-        <h3>❌ Deletar Restaurante</h3>
+        <h3> Deletar Restaurante</h3>
         <input
           className="form-control"
           placeholder="ID do Restaurante para Deletar"
@@ -156,7 +156,7 @@ export default function Restaurante() {
           Deletar Restaurante
         </button>
         {deleteMensagem && (
-          <p className={deleteMensagem.startsWith("❌") ? "text-danger" : "text-success"}>
+          <p className={deleteMensagem.startsWith("") ? "text-danger" : "text-success"}>
             {deleteMensagem}
           </p>
         )}

@@ -163,11 +163,11 @@ export default function Pedidos() {
       });
       setCadastroMensagem(
         res.ok
-          ? "✅ Pedido cadastrado com sucesso!"
-          : "❌ Erro ao cadastrar pedido."
+          ? " Pedido cadastrado com sucesso!"
+          : " Erro ao cadastrar pedido."
       );
     } catch {
-      setCadastroMensagem("❌ Erro de conexão.");
+      setCadastroMensagem(" Erro de conexão.");
     }
   };
 
@@ -219,7 +219,7 @@ export default function Pedidos() {
   if (tela === "acompanhamento") {
     return (
       <div className="container mt-5">
-        <h2>🚚 Acompanhamento</h2>
+        <h2>Acompanhamento</h2>
         {!statusEntrega ? (
           <p>Carregando status...</p>
         ) : (
@@ -238,7 +238,7 @@ export default function Pedidos() {
   if (tela === "pedidos") {
     return (
       <div className="container mt-5">
-        <h2>📝 Meus Pedidos</h2>
+        <h2>Meus Pedidos</h2>
         {pedidosCliente.length === 0 ? (
           <p>Nenhum pedido encontrado.</p>
         ) : (
@@ -276,7 +276,7 @@ export default function Pedidos() {
   return (
     <div className="container mt-5">
       {/* Cardápio */}
-      <h2>📋 Cardápio</h2>
+      <h2>Cardápio</h2>
       <div className="row">
         {cardapio.map(item => (
           <div key={item.id} className="col-md-4 mb-3">
@@ -324,10 +324,10 @@ export default function Pedidos() {
 
       {/* Seções estáticas JSON */}
       <hr/>
-      <h2>📦 JSON CRUD (fallback)</h2>
+      <h2>JSON CRUD (fallback)</h2>
 
       <div className="section mb-4">
-        <h5>📝 Cadastrar Pedido (JSON)</h5>
+        <h5>Cadastrar Pedido (JSON)</h5>
         <textarea
           className="form-control mb-2"
           rows={3}
@@ -342,7 +342,7 @@ export default function Pedidos() {
       </div>
 
       <div className="section mb-4">
-        <h5>📋 Listar Todos os Pedidos</h5>
+        <h5>Listar Todos os Pedidos</h5>
         <button className="btn btn-outline-secondary" onClick={listarTodosOsPedidos}>
           Listar Todos
         </button>
@@ -358,7 +358,7 @@ export default function Pedidos() {
       </div>
 
       <div className="section">
-        <h5>🔍 Buscar Pedidos por Cliente (JSON)</h5>
+        <h5>Buscar Pedidos por Cliente (JSON)</h5>
         <input
           className="form-control mb-2"
           placeholder="ID do Cliente"
