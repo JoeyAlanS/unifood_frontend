@@ -9,20 +9,17 @@ export default function Restaurantes() {
   const [pedidos, setPedidos] = useState([])
   const [showCardapio, setShowCardapio] = useState(false)
 
-  // Estados do formulário de restaurante
   const [nome, setNome] = useState("")
   const [cnpj, setCnpj] = useState("")
   const [categoria, setCategoria] = useState("")
   const [endereco, setEndereco] = useState("")
 
-  // Estados do formulário de cardápio
   const [nomeItem, setNomeItem] = useState("")
   const [precoItem, setPrecoItem] = useState("")
   const [descricaoItem, setDescricaoItem] = useState("")
 
   const BASE_URL = "https://restaurante-production-7756.up.railway.app"
 
-  // Carregar restaurantes
   const carregarRestaurantes = async () => {
     try {
       const resposta = await fetch(`${BASE_URL}/restaurante`)
@@ -33,7 +30,6 @@ export default function Restaurantes() {
     }
   }
 
-  // Carregar pedidos
   const carregarPedidos = async () => {
     try {
       const resposta = await fetch(`${BASE_URL}/restaurante/pedidos`)
@@ -45,7 +41,6 @@ export default function Restaurantes() {
     }
   }
 
-  // Carregar cardápio
   const carregarCardapio = async (restauranteId) => {
     setRestauranteSelecionadoId(restauranteId)
     try {
@@ -58,7 +53,6 @@ export default function Restaurantes() {
     }
   }
 
-  // Adicionar restaurante
   const handleSubmitRestaurante = async (e) => {
     e.preventDefault()
     const novoRestaurante = { nome, cnpj, categoria, endereco }
@@ -82,7 +76,6 @@ export default function Restaurantes() {
     }
   }
 
-  // Excluir restaurante
   const excluirRestaurante = async (id) => {
     if (window.confirm("Deseja realmente excluir este restaurante?")) {
       try {
@@ -97,7 +90,6 @@ export default function Restaurantes() {
     }
   }
 
-  // Adicionar item ao cardápio
   const handleSubmitCardapio = async (e) => {
     e.preventDefault()
     const novoItem = {
@@ -125,7 +117,6 @@ export default function Restaurantes() {
     }
   }
 
-  // Excluir item do cardápio
   const excluirItemCardapio = async (itemId) => {
     try {
       const resposta = await fetch(`${BASE_URL}/itensCardapio/${itemId}`, {
@@ -138,7 +129,24 @@ export default function Restaurantes() {
     }
   }
 
-  // Carregar dados iniciais
+  const atribuirEntrega = async (orderId) => {
+    try {
+      const resposta = await fetch(
+        `${BASE_URL}/restaurante/atribuir-entrega/${orderId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+      if (!resposta.ok) throw new Error("Erro ao atribuir entrega");
+      alert("Entrega atribuída com sucesso!");
+      await carregarPedidos();
+    } catch (erro) {
+      alert("Erro ao atribuir entrega.");
+      console.error(erro);
+    }
+  }
+
   useEffect(() => {
     carregarRestaurantes()
     carregarPedidos()
@@ -279,10 +287,26 @@ export default function Restaurantes() {
         <div className="mb-5">
           <ul className="list-group">
             {pedidos.map((pedido) => (
-              <li key={pedido.id} className="list-group-item">
+              <li
+                key={pedido.id}
+                className={`list-group-item${pedido.entregadorId ? " bg-success bg-opacity-25" : ""}`}
+              >
                 <strong>ID:</strong> {pedido.id} <br />
                 <strong>Cliente:</strong> {pedido.clienteId} <br />
                 <strong>Total:</strong> R$ {(pedido.valorTotal || 0).toFixed(2)}
+                <br />
+                {pedido.entregadorId && (
+                  <span className="badge bg-success mb-2 fs-6" style={{ fontSize: "1rem" }}>
+                    Entrega já atribuída ao entregador {pedido.entregadorId}
+                  </span>
+                )}
+                <button
+                  className="btn btn-sm btn-outline-primary mt-2"
+                  onClick={() => atribuirEntrega(pedido.id)}
+                  disabled={!!pedido.entregadorId}
+                >
+                  {pedido.entregadorId ? "Já atribuído" : "Atribuir ao entregador"}
+                </button>
               </li>
             ))}
           </ul>
